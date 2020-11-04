@@ -1,0 +1,24 @@
+{
+  "name": "fastify-casbin-rest-example",
+  "version": "1.0.0",
+  "description": "Sample Node.js application for fastify-casbin-rest",
+  "main": "index.js",
+  "scripts": {
+    "start": "fastify start -p 3001 -w -l=info -P ."
+  },
+  "author": "Simone Busoli <simone.busoli@nearform.com>",
+  "license": "MIT",
+  "dependencies": {
+    "casbin": "^5.1.6",
+    "casbin-pg-adapter": "^1.4.0",
+    "casbin-pg-watcher": "^0.1.1",
+    "fastify": "^3.7.0",
+    "fastify-casbin": "^1.0.0",
+    "fastify-cli": "^2.5.0",
+    "fastify-jwt": "^2.1.3",
+    "fastify-plugin": "^3.0.0",
+    "fastify-postgres": "^3.1.0",
+    "http-errors": "^1.8.0",
+    "pg": "^8.4.1"
+  }
+}
