@@ -220,10 +220,11 @@ test('supports overriding plugin rules on route level', t => {
 
   fastify.get('/', {
     casbin: {
-      rest: true,
-      getSub: request => request.method,
-      getObj: request => request.user,
-      getAct: request => request.url
+      rest: {
+        getSub: request => request.method,
+        getObj: request => request.user,
+        getAct: request => request.url
+      }
     }
   }, () => 'ok')
 

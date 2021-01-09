@@ -29,9 +29,9 @@ async function fastifyCasbinRest (fastify, options) {
         routeOptions[hook] = [routeOptions[hook]]
       }
 
-      const getSub = routeOptions.casbin.getSub || options.getSub
-      const getObj = routeOptions.casbin.getObj || options.getObj
-      const getAct = routeOptions.casbin.getAct || options.getAct
+      const getSub = routeOptions.casbin.rest.getSub || options.getSub
+      const getObj = routeOptions.casbin.rest.getObj || options.getObj
+      const getAct = routeOptions.casbin.rest.getAct || options.getAct
 
       routeOptions[hook].push(async (request, reply) => {
         const sub = getSub(request)
