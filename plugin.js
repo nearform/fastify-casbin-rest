@@ -9,7 +9,8 @@ const defaultOptions = {
   getAct: request => request.method,
   onDeny: (reply, sub, obj, act) => {
     throw new Forbidden(`${sub} not allowed to ${act} ${obj}`)
-  }
+  },
+  hook: 'preHandler'
 }
 
 async function fastifyCasbinRest (fastify, options) {
@@ -21,7 +22,7 @@ async function fastifyCasbinRest (fastify, options) {
     // fastify-swagger for an example
     // i.e. enforceForAllRoutes
     if (routeOptions.casbin && routeOptions.casbin.rest) {
-      const hook = options.hook || 'preHandler'
+      const { hook } = options
       if (!routeOptions[hook]) {
         routeOptions[hook] = []
       }
