@@ -26,3 +26,13 @@ server.register(casbinRest, {
     return ''
   }
 })
+
+server.get('/', {
+  casbin: {
+    rest: {
+      getSub: (request: FastifyRequest) => '1',
+      getObj: (request: FastifyRequest) => request.url,
+      getAct: (request: FastifyRequest) => request.method
+    }
+  }
+}, () => Promise.resolve('ok'))

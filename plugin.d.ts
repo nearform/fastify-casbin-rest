@@ -2,6 +2,18 @@
 
 import { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
 
+declare module 'fastify' {
+  interface RouteShorthandOptions {
+    casbin?: {
+      rest?: boolean | {
+        getSub?: (request: FastifyRequest) => string,
+        getObj?: (request: FastifyRequest) => string,
+        getAct?: (request: FastifyRequest) => string
+      }
+    }
+  }
+}
+
 export type Hook =
   | 'onRequest'
   | 'preParsing'
