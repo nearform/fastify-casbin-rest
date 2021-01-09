@@ -29,10 +29,14 @@ async function fastifyCasbinRest (fastify, options) {
         routeOptions[hook] = [routeOptions[hook]]
       }
 
+      const getSub = routeOptions.casbin.getSub || options.getSub
+      const getObj = routeOptions.casbin.getObj || options.getObj
+      const getAct = routeOptions.casbin.getAct || options.getAct
+
       routeOptions[hook].push(async (request, reply) => {
-        const sub = options.getSub(request)
-        const obj = options.getObj(request)
-        const act = options.getAct(request)
+        const sub = getSub(request)
+        const obj = getObj(request)
+        const act = getAct(request)
 
         fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce')
 
