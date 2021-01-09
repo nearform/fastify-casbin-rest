@@ -3,13 +3,13 @@
 import { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
 
 declare module 'fastify' {
-  interface RouteShorthandOptions{
+  interface RouteShorthandOptions {
     casbin?: {
       rest?: boolean | {
-      getSub?: (request: FastifyRequest) => string,
-      getObj?: (request: FastifyRequest) => string,
-      getAct?: (request: FastifyRequest) => string
-    }
+        getSub?: (request: FastifyRequest) => string,
+        getObj?: (request: FastifyRequest) => string,
+        getAct?: (request: FastifyRequest) => string
+      }
     }
   }
 }
