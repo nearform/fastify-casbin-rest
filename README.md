@@ -39,6 +39,19 @@ fastify.route({
 })
 ```
 
+### Route options
+
+This plugin introduces new route option `casbin.rest`. It can be either a `true` value (which enables default configuration) or an object.
+Supported object options:
+
+| Option   | Type                                                       | Description                                       | Default                         |
+| -------- | ---------------------------------------------------------- | ------------------------------------------------- | ------------------------------- |
+| `getSub` | `Request => string`                                        | Extracts `sub` from the request                   | Value from plugin options       |
+| `getObj` | `Request => string`                                        | Extracts `obj` from the request                   | Value from plugin options       |
+| `getAct` | `Request => string`                                        | Extracts `act` from the request                   | Value from plugin options       |
+
+### Plugin options
+
 The API exposed by this plugin is the configuration options:
 
 | Option   | Type                                                       | Description                                       | Default                         |
@@ -49,7 +62,7 @@ The API exposed by this plugin is the configuration options:
 | `onDeny` | `(Reply, sub, obj, act) => any`                            | Invoked when Casbin's `enforce` resolves to false | Returns a `403 Forbidden` error |
 | `hook`   | `'onRequest', 'preParsing', 'preValidation', 'preHandler'` | Which lifecycle to use for performing the check   | `'preHandler'`                  |
 
-You can also set `getSub`, `getObj` and `getAct` params inside route options `casbin.rest` branch. Route extraction rules take precedence over global plugin rules.
+Note that extraction rules defined within route options take precedence over the rules defined in the plugin options.
 
 ## Examples
 
