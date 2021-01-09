@@ -172,3 +172,35 @@ test('works correctly if there is an existing preHandler hook', t => {
     fastify.close()
   })
 })
+
+test('supports specifying custom hooks', t => {
+  t.plan(4)
+
+  let counter = 0
+  const fastify = Fastify()
+
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin, { hook: 'onRequest' })
+
+  fastify.get('/', {
+    preParsing: (req, reply, done) => {
+      counter++
+      done()
+    },
+
+    casbin: { rest: true }
+  }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.resolves(false)
+
+    t.equal((await fastify.inject('/')).statusCode, 403)
+
+    t.ok(fastify.casbin.enforce.called)
+    t.equal(counter, 0)
+
+    fastify.close()
+  })
+})
