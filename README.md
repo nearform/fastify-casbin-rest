@@ -41,13 +41,13 @@ fastify.route({
 
 The API exposed by this plugin is the configuration options:
 
-| Option   | Type                                                        | Description                                       | Default                         |
-| -------- | ----------------------------------------------------------- | ------------------------------------------------- | ------------------------------- |
-| `getSub` | `Request => string`                                         | Extracts `sub` from the request                   | `r => r.user`                   |
-| `getObj` | `Request => string`                                         | Extracts `obj` from the request                   | `r => r.url`                    |
-| `getAct` | `Request => string`                                         | Extracts `act` from the request                   | `r => r.method`                 |
-| `onDeny` | `(Reply, sub, obj, act) => any`                             | Invoked when Casbin's `enforce` resolves to false | Returns a `403 Forbidden` error |
-| `hook`   | `'onRequest' | 'preParsing' | preValidation` | 'preHandler' | Which lifecycle to use for performing the check   | 'onRoute'                       |
+| Option   | Type                                                          | Description                                       | Default                         |
+| -------- | ------------------------------------------------------------- | ------------------------------------------------- | ------------------------------- |
+| `getSub` | `Request => string`                                           | Extracts `sub` from the request                   | `r => r.user`                   |
+| `getObj` | `Request => string`                                           | Extracts `obj` from the request                   | `r => r.url`                    |
+| `getAct` | `Request => string`                                           | Extracts `act` from the request                   | `r => r.method`                 |
+| `onDeny` | `(Reply, sub, obj, act) => any`                               | Invoked when Casbin's `enforce` resolves to false | Returns a `403 Forbidden` error |
+| `hook`   | `'onRequest' | 'preParsing' | 'preValidation' | 'preHandler'` | Which lifecycle to use for performing the check   | 'onRoute'                       |
 
 You can also set `getSub`, `getObj` and `getAct` params inside route options. Route extraction rules take precedence over global plugin rules.
 
