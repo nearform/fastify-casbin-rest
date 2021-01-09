@@ -9,7 +9,8 @@ const defaultOptions = {
   getAct: request => request.method,
   onDeny: (reply, sub, obj, act) => {
     throw new Forbidden(`${sub} not allowed to ${act} ${obj}`)
-  }
+  },
+  hook: 'preHandler'
 }
 
 async function fastifyCasbinRest (fastify, options) {
@@ -21,7 +22,7 @@ async function fastifyCasbinRest (fastify, options) {
     // fastify-swagger for an example
     // i.e. enforceForAllRoutes
     if (routeOptions.casbin && routeOptions.casbin.rest) {
-      const hook = options.hook || 'preHandler'
+      const { hook } = options
       if (!routeOptions[hook]) {
         routeOptions[hook] = []
       }
@@ -29,10 +30,14 @@ async function fastifyCasbinRest (fastify, options) {
         routeOptions[hook] = [routeOptions[hook]]
       }
 
+      const getSub = routeOptions.casbin.rest.getSub || options.getSub
+      const getObj = routeOptions.casbin.rest.getObj || options.getObj
+      const getAct = routeOptions.casbin.rest.getAct || options.getAct
+
       routeOptions[hook].push(async (request, reply) => {
-        const sub = options.getSub(request)
-        const obj = options.getObj(request)
-        const act = options.getAct(request)
+        const sub = getSub(request)
+        const obj = getObj(request)
+        const act = getAct(request)
 
         fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce')
 

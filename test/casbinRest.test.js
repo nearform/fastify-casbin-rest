@@ -204,3 +204,41 @@ test('supports specifying custom hooks', t => {
     fastify.close()
   })
 })
+
+test('supports overriding plugin rules on route level', t => {
+  t.plan(4)
+
+  const fastify = Fastify()
+
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin, {
+    hook: 'onRequest',
+    getSub: request => request.user,
+    getObj: request => request.url,
+    getAct: request => request.method
+  })
+
+  fastify.get('/', {
+    casbin: {
+      rest: {
+        getSub: request => request.method,
+        getObj: request => request.user,
+        getAct: request => request.url
+      }
+    }
+  }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.callsFake((sub, obj, act) => {
+      t.equal(sub, 'GET')
+      t.equal(obj, undefined)
+      t.equal(act, '/')
+      return Promise.resolve(false)
+    })
+
+    await fastify.inject('/')
+    fastify.close()
+  })
+})
