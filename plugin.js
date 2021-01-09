@@ -21,7 +21,15 @@ async function fastifyCasbinRest (fastify, options) {
     // fastify-swagger for an example
     // i.e. enforceForAllRoutes
     if (routeOptions.casbin && routeOptions.casbin.rest) {
-      routeOptions.preHandler = async (request, reply) => {
+      const hook = options.hook || 'preHandler'
+      if (!routeOptions[hook]) {
+        routeOptions[hook] = []
+      }
+      if (!Array.isArray(routeOptions[hook])) {
+        routeOptions[hook] = [routeOptions[hook]]
+      }
+
+      routeOptions[hook].push(async (request, reply) => {
         const sub = options.getSub(request)
         const obj = options.getObj(request)
         const act = options.getAct(request)
@@ -31,7 +39,7 @@ async function fastifyCasbinRest (fastify, options) {
         if (!(await fastify.casbin.enforce(sub, obj, act))) {
           await options.onDeny(reply, sub, obj, act)
         }
-      }
+      })
     }
   })
 }
