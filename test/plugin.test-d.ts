@@ -36,3 +36,13 @@ server.get('/', {
     }
   }
 }, () => Promise.resolve('ok'))
+
+server.get('/entity', {
+  casbin: {
+    rest: {
+      getSub: '1',
+      getObj: 'entity',
+      getAct: 'read'
+    }
+  }
+}, () => Promise.resolve('ok'))

@@ -44,11 +44,11 @@ fastify.route({
 This plugin introduces new route option `casbin.rest`. It can be either a `true` value (which enables default configuration) or an object.
 Supported object options:
 
-| Option   | Type                | Description                      | Default                     |
-| -------- | ------------------- | -------------------------------- | --------------------------- |
-| `getSub` | `Request => string` | Extracts `sub` from the request  | Value from plugin options   |
-| `getObj` | `Request => string` | Extracts `obj` from the request  | Value from plugin options   |
-| `getAct` | `Request => string` | Extracts `act` from the request  | Value from plugin options   |
+| Option   | Type                            | Description                                  | Default                     |
+| -------- | ------------------------------- | -------------------------------------------- | --------------------------- |
+| `getSub` | `Request => string` or `string` | Extracts `sub` from the request or constant  | Value from plugin options   |
+| `getObj` | `Request => string` or `string` | Extracts `obj` from the request or constant  | Value from plugin options   |
+| `getAct` | `Request => string` or `string` | Extracts `act` from the request or constant  | Value from plugin options   |
 
 ### Plugin options
 
