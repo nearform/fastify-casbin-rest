@@ -32,7 +32,7 @@ test('throws if no casbin decorator exists', t => {
   fastify.register(plugin)
 
   fastify.ready(err => {
-    t.is(err.message, "The decorator 'casbin' is not present in Fastify")
+    t.is(err.message, "The decorator 'casbin' required by 'fastify-casbin-rest' is not present in Fastify")
 
     fastify.close()
   })
