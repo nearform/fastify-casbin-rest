@@ -205,6 +205,37 @@ test('supports specifying custom hooks', t => {
   })
 })
 
+test('supports specifying custom logger', t => {
+  t.plan(5)
+
+  const fastify = Fastify()
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin, {
+    log: (fastify, request, sub, obj, act) => {
+      t.equal(sub, 'a')
+      t.equal(obj, 'b')
+      t.equal(act, 'c')
+    },
+    getSub: _request => 'a',
+    getObj: _request => 'b',
+    getAct: _request => 'c'
+  })
+
+  fastify.get('/', {
+    casbin: { rest: true }
+  }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.resolves(true)
+
+    t.equal((await fastify.inject('/')).statusCode, 200)
+
+    fastify.close()
+  })
+})
+
 test('supports overriding plugin rules on route level', t => {
   t.plan(4)
 
