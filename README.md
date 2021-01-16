@@ -112,7 +112,8 @@ fastify.get(
     // enable fastify-casbin-rest plugin on this route, override default "getObj" rule
     casbin: {
       rest: {
-        getObj: request => request.userId
+        getSub: request => request.userId,
+        getAct: 'read'
       },
     }
   },
