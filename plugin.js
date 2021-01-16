@@ -32,9 +32,9 @@ async function fastifyCasbinRest (fastify, options) {
         routeOptions[hook] = [routeOptions[hook]]
       }
 
-      const getSub = routeOptions.casbin.rest.getSub || options.getSub
-      const getObj = routeOptions.casbin.rest.getObj || options.getObj
-      const getAct = routeOptions.casbin.rest.getAct || options.getAct
+      const getSub = resolveParameterExtractor(routeOptions.casbin.rest.getSub, options.getSub)
+      const getObj = resolveParameterExtractor(routeOptions.casbin.rest.getObj, options.getObj)
+      const getAct = resolveParameterExtractor(routeOptions.casbin.rest.getAct, options.getAct)
 
       routeOptions[hook].push(async (request, reply) => {
         const sub = getSub(request)
@@ -48,6 +48,20 @@ async function fastifyCasbinRest (fastify, options) {
       })
     }
   })
+}
+
+function isString (value) {
+  return typeof value === 'string'
+}
+
+function resolveParameterExtractor (routeOption, pluginOption) {
+  if (routeOption) {
+    if (isString(routeOption)) {
+      return () => routeOption
+    }
+    return routeOption
+  }
+  return pluginOption
 }
 
 module.exports = fp(fastifyCasbinRest, {

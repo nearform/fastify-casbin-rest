@@ -6,9 +6,9 @@ declare module 'fastify' {
   interface RouteShorthandOptions {
     casbin?: {
       rest?: boolean | {
-        getSub?: (request: FastifyRequest) => string,
-        getObj?: (request: FastifyRequest) => string,
-        getAct?: (request: FastifyRequest) => string
+        getSub?: ((request: FastifyRequest) => string) | string,
+        getObj?: ((request: FastifyRequest) => string) | string,
+        getAct?: ((request: FastifyRequest) => string) | string
       }
     }
   }
