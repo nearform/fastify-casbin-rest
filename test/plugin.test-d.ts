@@ -7,6 +7,7 @@ const server = fastify()
 server.register(casbinRest)
 
 server.register(casbinRest, {
+  log: (fastify, request, sub, obj, act) => { fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce') },
   onDeny: (reply, sub, obj, act) => {
     expectType<FastifyReply>(reply)
     expectType<string>(sub)

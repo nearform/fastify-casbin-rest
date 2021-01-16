@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import { FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
+import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
 
 declare module 'fastify' {
   interface RouteShorthandOptions {
@@ -25,6 +25,7 @@ export interface FastifyCasbinRestOptions {
   getObj?(request: FastifyRequest): string
   getAct?(request: FastifyRequest): string
   onDeny?(reply: FastifyReply, sub: string, obj: string, act: string): void
+  log?(fastify: FastifyInstance, request: FastifyRequest, sub: string, obj: string, act: string): void
   hook?: Hook
 }
 

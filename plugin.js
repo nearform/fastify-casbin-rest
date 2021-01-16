@@ -10,11 +10,13 @@ const defaultOptions = {
   onDeny: (reply, sub, obj, act) => {
     throw new Forbidden(`${sub} not allowed to ${act} ${obj}`)
   },
+  log: (fastify, request, sub, obj, act) => { fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce') },
   hook: 'preHandler'
 }
 
 async function fastifyCasbinRest (fastify, options) {
   options = { ...defaultOptions, ...options }
+  const { log } = options
 
   fastify.addHook('onRoute', routeOptions => {
     // add option to turn it on for all routes
@@ -39,8 +41,7 @@ async function fastifyCasbinRest (fastify, options) {
         const obj = getObj(request)
         const act = getAct(request)
 
-        fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce')
-
+        log(fastify, request, sub, obj, act)
         if (!(await fastify.casbin.enforce(sub, obj, act))) {
           await options.onDeny(reply, sub, obj, act)
         }
