@@ -60,6 +60,7 @@ The API exposed by this plugin is the configuration options:
 | `getObj` | `Request => string`                                        | Extracts `obj` from the request                   | `r => r.url`                    |
 | `getAct` | `Request => string`                                        | Extracts `act` from the request                   | `r => r.method`                 |
 | `onDeny` | `(Reply, sub, obj, act) => any`                            | Invoked when Casbin's `enforce` resolves to false | Returns a `403 Forbidden` error |
+| `log`    | `(Fastify, Request, sub, obj, act => void`                 | Invoked before invoking Casbin's `enforce`        | Logs using fastify.log.info     |
 | `hook`   | `'onRequest', 'preParsing', 'preValidation', 'preHandler'` | Which lifecycle to use for performing the check   | `'preHandler'`                  |
 
 Note that extraction rules defined within route options take precedence over the rules defined in the plugin options.

@@ -32,7 +32,7 @@ test('throws if no casbin decorator exists', t => {
   fastify.register(plugin)
 
   fastify.ready(err => {
-    t.is(err.message, "The decorator 'casbin' is not present in Fastify")
+    t.is(err.message, "The decorator 'casbin' required by 'fastify-casbin-rest' is not present in Fastify")
 
     fastify.close()
   })
@@ -200,6 +200,37 @@ test('supports specifying custom hooks', t => {
 
     t.ok(fastify.casbin.enforce.called)
     t.equal(counter, 0)
+
+    fastify.close()
+  })
+})
+
+test('supports specifying custom logger', t => {
+  t.plan(5)
+
+  const fastify = Fastify()
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin, {
+    log: (fastify, request, sub, obj, act) => {
+      t.equal(sub, 'a')
+      t.equal(obj, 'b')
+      t.equal(act, 'c')
+    },
+    getSub: _request => 'a',
+    getObj: _request => 'b',
+    getAct: _request => 'c'
+  })
+
+  fastify.get('/', {
+    casbin: { rest: true }
+  }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.resolves(true)
+
+    t.equal((await fastify.inject('/')).statusCode, 200)
 
     fastify.close()
   })
