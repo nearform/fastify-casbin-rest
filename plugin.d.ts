@@ -1,14 +1,28 @@
 /// <reference types="node" />
 
 import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify'
+import {
+  ContextConfigDefault,
+  RawReplyDefaultExpression,
+  RawRequestDefaultExpression,
+  RawServerBase,
+  RawServerDefault
+} from 'fastify/types/utils'
+import { RouteGenericInterface } from 'fastify/types/route'
 
 declare module 'fastify' {
-  interface RouteShorthandOptions {
+  interface RouteShorthandOptions<
+    RawServer extends RawServerBase = RawServerDefault,
+    RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,
+    RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>,
+    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+    ContextConfig = ContextConfigDefault
+    > {
     casbin?: {
       rest?: boolean | {
-        getSub?: ((request: FastifyRequest) => string) | string,
-        getObj?: ((request: FastifyRequest) => string) | string,
-        getAct?: ((request: FastifyRequest) => string) | string
+        getSub?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string,
+        getObj?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string,
+        getAct?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string
       }
     }
   }

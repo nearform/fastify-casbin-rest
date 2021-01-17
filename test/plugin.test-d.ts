@@ -1,4 +1,4 @@
-import fastify, { FastifyReply, FastifyRequest } from 'fastify'
+import fastify, { FastifyReply, FastifyRequest, RequestGenericInterface } from 'fastify'
 import { expectType } from 'tsd'
 import casbinRest from '../plugin'
 
@@ -44,6 +44,21 @@ server.get('/entity', {
       getSub: '1',
       getObj: 'entity',
       getAct: 'read'
+    }
+  }
+}, () => Promise.resolve('ok'))
+
+
+interface ListRequest extends RequestGenericInterface {
+  Params: {
+    listID: string
+  }
+}
+
+server.get<ListRequest>('/', {
+  casbin: {
+    rest: {
+      getObj: (request) => request.params.listID,
     }
   }
 }, () => Promise.resolve('ok'))
