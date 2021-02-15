@@ -5,12 +5,13 @@ const { Forbidden } = require('http-errors')
 
 const defaultOptions = {
   getSub: request => request.user,
+  getDom: null,
   getObj: request => request.url,
   getAct: request => request.method,
-  onDeny: (reply, sub, obj, act) => {
-    throw new Forbidden(`${sub} not allowed to ${act} ${obj}`)
+  onDeny: (reply, sub, obj, act, dom) => {
+    throw new Forbidden(`${sub} not allowed to ${act} ${dom ? dom + ' ' : ''}${obj}`)
   },
-  log: (fastify, request, sub, obj, act) => { fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce') },
+  log: (fastify, request, sub, obj, act, _dom) => { fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce') },
   hook: 'preHandler'
 }
 
@@ -35,15 +36,25 @@ async function fastifyCasbinRest (fastify, options) {
       const getSub = resolveParameterExtractor(routeOptions.casbin.rest.getSub, options.getSub)
       const getObj = resolveParameterExtractor(routeOptions.casbin.rest.getObj, options.getObj)
       const getAct = resolveParameterExtractor(routeOptions.casbin.rest.getAct, options.getAct)
+      const getDom = resolveParameterExtractor(routeOptions.casbin.rest.getDom, options.getDom)
 
       routeOptions[hook].push(async (request, reply) => {
         const sub = getSub(request)
         const obj = getObj(request)
         const act = getAct(request)
 
-        log(fastify, request, sub, obj, act)
-        if (!(await fastify.casbin.enforce(sub, obj, act))) {
-          await options.onDeny(reply, sub, obj, act)
+        if (!getDom) {
+          log(fastify, request, sub, obj, act)
+          if (!(await fastify.casbin.enforce(sub, obj, act))) {
+            await options.onDeny(reply, sub, obj, act)
+          }
+          return
+        }
+
+        const dom = getDom(request)
+        log(fastify, request, sub, obj, act, dom)
+        if (!(await fastify.casbin.enforce(sub, dom, obj, act))) {
+          await options.onDeny(reply, sub, obj, act, dom)
         }
       })
     }
@@ -55,7 +66,7 @@ function isString (value) {
 }
 
 function resolveParameterExtractor (routeOption, pluginOption) {
-  if (routeOption) {
+  if (routeOption !== undefined) {
     if (isString(routeOption)) {
       return () => routeOption
     }

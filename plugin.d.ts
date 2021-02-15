@@ -21,6 +21,7 @@ declare module 'fastify' {
     casbin?: {
       rest?: boolean | {
         getSub?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string,
+        getDom?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string | null,
         getObj?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string,
         getAct?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string
       }
@@ -36,10 +37,11 @@ export type Hook =
 
 export interface FastifyCasbinRestOptions {
   getSub?(request: FastifyRequest): string
+  getDom?(request: FastifyRequest): string
   getObj?(request: FastifyRequest): string
   getAct?(request: FastifyRequest): string
-  onDeny?(reply: FastifyReply, sub: string, obj: string, act: string): void
-  log?(fastify: FastifyInstance, request: FastifyRequest, sub: string, obj: string, act: string): void
+  onDeny?(reply: FastifyReply, sub: string, obj: string, act: string, dom: string): void
+  log?(fastify: FastifyInstance, request: FastifyRequest, sub: string, obj: string, act: string, dom: string): void
   hook?: Hook
 }
 

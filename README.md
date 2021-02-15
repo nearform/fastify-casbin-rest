@@ -47,6 +47,7 @@ Supported object options:
 | Option   | Type                            | Description                                  | Default                     |
 | -------- | ------------------------------- | -------------------------------------------- | --------------------------- |
 | `getSub` | `Request => string` or `string` | Extracts `sub` from the request or constant  | Value from plugin options   |
+| `getDom` | `Request => string` or `string` | Extracts `dom` from the request or constant  | Value from plugin options   |
 | `getObj` | `Request => string` or `string` | Extracts `obj` from the request or constant  | Value from plugin options   |
 | `getAct` | `Request => string` or `string` | Extracts `act` from the request or constant  | Value from plugin options   |
 
@@ -57,13 +58,16 @@ The API exposed by this plugin is the configuration options:
 | Option   | Type                                                       | Description                                       | Default                         |
 | -------- | ---------------------------------------------------------- | ------------------------------------------------- | ------------------------------- |
 | `getSub` | `Request => string`                                        | Extracts `sub` from the request                   | `r => r.user`                   |
+| `getDom` | `Request => string`                                        | Extracts `dom` from the request                   |  not set by default             |
 | `getObj` | `Request => string`                                        | Extracts `obj` from the request                   | `r => r.url`                    |
 | `getAct` | `Request => string`                                        | Extracts `act` from the request                   | `r => r.method`                 |
-| `onDeny` | `(Reply, sub, obj, act) => any`                            | Invoked when Casbin's `enforce` resolves to false | Returns a `403 Forbidden` error |
-| `log`    | `(Fastify, Request, sub, obj, act => void`                 | Invoked before invoking Casbin's `enforce`        | Logs using fastify.log.info     |
+| `onDeny` | `(Reply, sub, obj, act, dom) => any`                       | Invoked when Casbin's `enforce` resolves to false | Returns a `403 Forbidden` error |
+| `log`    | `(Fastify, Request, sub, obj, act, dom) => void`           | Invoked before invoking Casbin's `enforce`        | Logs using fastify.log.info     |
 | `hook`   | `'onRequest', 'preParsing', 'preValidation', 'preHandler'` | Which lifecycle to use for performing the check   | `'preHandler'`                  |
 
 Note that extraction rules defined within route options take precedence over the rules defined in the plugin options.
+If `getDom` is not set either on a route nor on a plugin level, enforcer is invoked with `(sub, obj, act)`.
+If `getDom` is set, enforcer is invoked with `(sub, dom, obj, act)`.
 
 ## Examples
 
