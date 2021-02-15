@@ -21,7 +21,7 @@ declare module 'fastify' {
     casbin?: {
       rest?: boolean | {
         getSub?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string,
-        getDom?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string | null,
+        getDom?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string,
         getObj?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string,
         getAct?: ((request: FastifyRequest<RouteGeneric, RawServer, RawRequest>) => string) | string
       }

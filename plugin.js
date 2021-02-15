@@ -5,7 +5,7 @@ const { Forbidden } = require('http-errors')
 
 const defaultOptions = {
   getSub: request => request.user,
-  getDom: null,
+  getDom: (_request) => undefined,
   getObj: request => request.url,
   getAct: request => request.method,
   onDeny: (reply, sub, obj, act, dom) => {
@@ -42,18 +42,12 @@ async function fastifyCasbinRest (fastify, options) {
         const sub = getSub(request)
         const obj = getObj(request)
         const act = getAct(request)
-
-        if (!getDom) {
-          log(fastify, request, sub, obj, act)
-          if (!(await fastify.casbin.enforce(sub, obj, act))) {
-            await options.onDeny(reply, sub, obj, act)
-          }
-          return
-        }
-
         const dom = getDom(request)
+
         log(fastify, request, sub, obj, act, dom)
-        if (!(await fastify.casbin.enforce(sub, dom, obj, act))) {
+        const isAuthorized = dom ? await fastify.casbin.enforce(sub, dom, obj, act) : await fastify.casbin.enforce(sub, obj, act)
+
+        if (!isAuthorized) {
           await options.onDeny(reply, sub, obj, act, dom)
         }
       })
@@ -66,7 +60,7 @@ function isString (value) {
 }
 
 function resolveParameterExtractor (routeOption, pluginOption) {
-  if (routeOption !== undefined) {
+  if (routeOption) {
     if (isString(routeOption)) {
       return () => routeOption
     }
