@@ -5,7 +5,6 @@ const { Forbidden } = require('http-errors')
 
 const defaultOptions = {
   getSub: request => request.user,
-  getDom: (_request) => undefined,
   getObj: request => request.url,
   getAct: request => request.method,
   onDeny: (reply, sub, obj, act, dom) => {
@@ -42,10 +41,10 @@ async function fastifyCasbinRest (fastify, options) {
         const sub = getSub(request)
         const obj = getObj(request)
         const act = getAct(request)
-        const dom = getDom(request)
+        const dom = getDom ? getDom(request) : undefined
 
         log(fastify, request, sub, obj, act, dom)
-        const isAuthorized = dom ? await fastify.casbin.enforce(sub, dom, obj, act) : await fastify.casbin.enforce(sub, obj, act)
+        const isAuthorized = getDom ? await fastify.casbin.enforce(sub, dom, obj, act) : await fastify.casbin.enforce(sub, obj, act)
 
         if (!isAuthorized) {
           await options.onDeny(reply, sub, obj, act, dom)
