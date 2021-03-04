@@ -7,10 +7,10 @@ const defaultOptions = {
   getSub: request => request.user,
   getObj: request => request.url,
   getAct: request => request.method,
-  onDeny: (reply, sub, obj, act, dom) => {
+  onDeny: (reply, { sub, obj, act, dom }) => {
     throw new Forbidden(`${sub} not allowed to ${act} ${dom ? dom + ' ' : ''}${obj}`)
   },
-  log: (fastify, request, sub, obj, act, dom) => { fastify.log.info({ sub, dom, obj, act }, 'Invoking casbin enforce') },
+  log: (fastify, request, permission) => { fastify.log.info(permission, 'Invoking casbin enforce') },
   hook: 'preHandler'
 }
 
@@ -43,11 +43,11 @@ async function fastifyCasbinRest (fastify, options) {
         const act = getAct(request)
         const dom = getDom ? getDom(request) : undefined
 
-        log(fastify, request, sub, obj, act, dom)
+        log(fastify, request, { sub, dom, obj, act })
         const isAuthorized = getDom ? await fastify.casbin.enforce(sub, dom, obj, act) : await fastify.casbin.enforce(sub, obj, act)
 
         if (!isAuthorized) {
-          await options.onDeny(reply, sub, obj, act, dom)
+          await options.onDeny(reply, { sub, dom, obj, act })
         }
       })
     }

@@ -282,7 +282,7 @@ test('supports specifying custom logger', t => {
   const fastify = Fastify()
   fastify.register(makeStubCasbin())
   fastify.register(plugin, {
-    log: (fastify, request, sub, obj, act) => {
+    log: (fastify, request, { sub, obj, act }) => {
       t.equal(sub, 'a')
       t.equal(obj, 'b')
       t.equal(act, 'c')
