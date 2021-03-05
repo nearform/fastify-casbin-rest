@@ -356,7 +356,7 @@ test('supports passing constants as extractor params', t => {
     getSub: request => request.user,
     getObj: request => request.url,
     getAct: request => request.method,
-    getDom: (_request) => 'common'
+    getDom: (request) => 'common'
   })
 
   fastify.get('/', {

@@ -35,7 +35,7 @@ export type Hook =
   | 'preValidation'
   | 'preHandler'
 
-export type Permission = { sub: string, dom?: string, obj: string, act: string}
+export type Permission = { sub: string, dom?: string, obj: string, act: string }
 
 export interface FastifyCasbinRestOptions {
   getSub?(request: FastifyRequest): string

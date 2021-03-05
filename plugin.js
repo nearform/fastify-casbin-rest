@@ -10,7 +10,7 @@ const defaultOptions = {
   onDeny: (reply, { sub, obj, act, dom }) => {
     throw new Forbidden(`${sub} not allowed to ${act} ${dom ? dom + ' ' : ''}${obj}`)
   },
-  log: (fastify, request, permission) => { fastify.log.info(permission, 'Invoking casbin enforce') },
+  log: (fastify, request, permission) => { request.log.info(permission, 'Invoking casbin enforce') },
   hook: 'preHandler'
 }
 
