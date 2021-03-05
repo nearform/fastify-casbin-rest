@@ -61,7 +61,7 @@ interface ListRequest extends RequestGenericInterface {
   }
 }
 
-server.delete<ListRequest>('/', {
+server.get<ListRequest>('/', {
   casbin: {
     rest: {
       getObj: (request) => request.params.listID,

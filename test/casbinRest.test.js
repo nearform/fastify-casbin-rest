@@ -345,7 +345,45 @@ test('supports overriding plugin rules on route level', t => {
   })
 })
 
-test('supports passing constants as extractor params', t => {
+test('supports passing constants as extractor params without domain', t => {
+  t.plan(4)
+
+  const fastify = Fastify()
+
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin, {
+    hook: 'onRequest',
+    getSub: request => request.user,
+    getObj: request => request.url,
+    getAct: request => request.method
+  })
+
+  fastify.get('/', {
+    casbin: {
+      rest: {
+        getSub: 'a',
+        getObj: 'b',
+        getAct: 'c'
+      }
+    }
+  }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.callsFake((sub, obj, act) => {
+      t.equal(sub, 'a')
+      t.equal(obj, 'b')
+      t.equal(act, 'c')
+      return Promise.resolve(false)
+    })
+
+    await fastify.inject('/')
+    fastify.close()
+  })
+})
+
+test('supports passing constants as extractor params with domain', t => {
   t.plan(5)
 
   const fastify = Fastify()
