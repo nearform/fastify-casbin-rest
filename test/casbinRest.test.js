@@ -56,7 +56,7 @@ test('throws if fastify-casbin plugin is not registered', t => {
   })
 })
 
-test('registration succeds if fastify-casbin providing a casbin decorator exists', t => {
+test('registration succeeds if fastify-casbin providing a casbin decorator exists', t => {
   t.plan(1)
 
   const fastify = Fastify()
@@ -96,7 +96,7 @@ test('ignores routes where plugin is not enabled', t => {
 })
 
 test('allows route where plugin is enabled and enforce resolves true', t => {
-  t.plan(3)
+  t.plan(6)
 
   const fastify = Fastify()
 
@@ -108,7 +108,41 @@ test('allows route where plugin is enabled and enforce resolves true', t => {
   fastify.ready(async err => {
     t.error(err)
 
-    fastify.casbin.enforce.resolves(true)
+    fastify.casbin.enforce.callsFake((sub, obj, act) => {
+      t.equal(sub, undefined)
+      t.equal(obj, '/')
+      t.equal(act, 'GET')
+      return Promise.resolve(true)
+    })
+
+    t.equal((await fastify.inject('/')).body, 'ok')
+
+    t.ok(fastify.casbin.enforce.called)
+
+    fastify.close()
+  })
+})
+
+test('allows route where plugin is enabled and enforce resolves true with dom resolver enabled', t => {
+  t.plan(7)
+
+  const fastify = Fastify()
+
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin)
+
+  fastify.get('/', { casbin: { rest: { getDom: 'domain' } } }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.callsFake((sub, dom, obj, act) => {
+      t.equal(sub, undefined)
+      t.equal(dom, 'domain')
+      t.equal(obj, '/')
+      t.equal(act, 'GET')
+      return Promise.resolve(true)
+    })
 
     t.equal((await fastify.inject('/')).body, 'ok')
 
@@ -119,7 +153,7 @@ test('allows route where plugin is enabled and enforce resolves true', t => {
 })
 
 test('forbids route where plugin is enabled and enforce resolves false', t => {
-  t.plan(3)
+  t.plan(6)
 
   const fastify = Fastify()
 
@@ -131,9 +165,46 @@ test('forbids route where plugin is enabled and enforce resolves false', t => {
   fastify.ready(async err => {
     t.error(err)
 
-    fastify.casbin.enforce.resolves(false)
+    fastify.casbin.enforce.callsFake((sub, obj, act) => {
+      t.equal(sub, undefined)
+      t.equal(obj, '/')
+      t.equal(act, 'GET')
+      return Promise.resolve(false)
+    })
 
     t.equal((await fastify.inject('/')).statusCode, 403)
+
+    t.ok(fastify.casbin.enforce.called)
+
+    fastify.close()
+  })
+})
+
+test('forbids route where plugin is enabled and enforce resolves false with dom resolver enabled', t => {
+  t.plan(7)
+
+  const fastify = Fastify()
+
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin, {
+    getDom: () => 'domain'
+  })
+
+  fastify.get('/', { casbin: { rest: true } }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.callsFake((sub, dom, obj, act) => {
+      t.equal(sub, undefined)
+      t.equal(dom, 'domain')
+      t.equal(obj, '/')
+      t.equal(act, 'GET')
+      return Promise.resolve(false)
+    })
+
+    const response = await fastify.inject('/')
+    t.equal(response.statusCode, 403)
 
     t.ok(fastify.casbin.enforce.called)
 
@@ -211,7 +282,7 @@ test('supports specifying custom logger', t => {
   const fastify = Fastify()
   fastify.register(makeStubCasbin())
   fastify.register(plugin, {
-    log: (fastify, request, sub, obj, act) => {
+    log: (fastify, request, { sub, obj, act }) => {
       t.equal(sub, 'a')
       t.equal(obj, 'b')
       t.equal(act, 'c')
@@ -274,7 +345,7 @@ test('supports overriding plugin rules on route level', t => {
   })
 })
 
-test('supports passing constants as extractor params', t => {
+test('supports passing constants as extractor params without domain', t => {
   t.plan(4)
 
   const fastify = Fastify()
@@ -302,6 +373,47 @@ test('supports passing constants as extractor params', t => {
 
     fastify.casbin.enforce.callsFake((sub, obj, act) => {
       t.equal(sub, 'a')
+      t.equal(obj, 'b')
+      t.equal(act, 'c')
+      return Promise.resolve(false)
+    })
+
+    await fastify.inject('/')
+    fastify.close()
+  })
+})
+
+test('supports passing constants as extractor params with domain', t => {
+  t.plan(5)
+
+  const fastify = Fastify()
+
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin, {
+    hook: 'onRequest',
+    getSub: request => request.user,
+    getObj: request => request.url,
+    getAct: request => request.method,
+    getDom: (request) => 'common'
+  })
+
+  fastify.get('/', {
+    casbin: {
+      rest: {
+        getSub: 'a',
+        getObj: 'b',
+        getAct: 'c',
+        getDom: 'users'
+      }
+    }
+  }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.callsFake((sub, dom, obj, act) => {
+      t.equal(sub, 'a')
+      t.equal(dom, 'users')
       t.equal(obj, 'b')
       t.equal(act, 'c')
       return Promise.resolve(false)

@@ -7,8 +7,8 @@ const server = fastify()
 server.register(casbinRest)
 
 server.register(casbinRest, {
-  log: (fastify, request, sub, obj, act) => { fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce') },
-  onDeny: (reply, sub, obj, act) => {
+  log: (fastify, request, { sub, obj, act }) => { fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce') },
+  onDeny: (reply, { sub, obj, act }) => {
     expectType<FastifyReply>(reply)
     expectType<string>(sub)
     expectType<string>(obj)
@@ -25,12 +25,17 @@ server.register(casbinRest, {
   getAct: request => {
     expectType<FastifyRequest>(request)
     return ''
+  },
+  getDom: request => {
+    expectType<FastifyRequest>(request)
+    return ''
   }
 })
 
 server.get('/', {
   casbin: {
     rest: {
+      getDom: (request: FastifyRequest) => 'users',
       getSub: (request: FastifyRequest) => '1',
       getObj: (request: FastifyRequest) => request.url,
       getAct: (request: FastifyRequest) => request.method
@@ -41,6 +46,7 @@ server.get('/', {
 server.get('/entity', {
   casbin: {
     rest: {
+      getDom: 'users',
       getSub: '1',
       getObj: 'entity',
       getAct: 'read'

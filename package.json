@@ -28,6 +28,13 @@
     "rest"
   ],
   "author": "Simone Busoli <simone.busoli@nearform.com>",
+  "contributors": [
+    {
+      "name": "Igor Savin",
+      "email": "kibertoad@gmail.com",
+      "web": "https://twitter.com/kibertoad"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nearform/fastify-casbin-rest/issues"
