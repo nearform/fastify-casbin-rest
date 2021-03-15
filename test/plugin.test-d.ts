@@ -1,4 +1,5 @@
 import fastify, { FastifyReply, FastifyRequest, RequestGenericInterface } from 'fastify'
+import type { RouteOptions } from 'fastify/types/route'
 import { expectType } from 'tsd'
 import casbinRest from '../plugin'
 
@@ -68,3 +69,18 @@ server.get<ListRequest>('/', {
     }
   }
 }, () => Promise.resolve('ok'))
+
+const route: RouteOptions = {
+  method: 'GET',
+  url: '/',
+  handler: async () => {
+  },
+  casbin: {
+    rest: {
+      getSub: '1',
+      getObj: 'entity',
+      getAct: 'read'
+    }
+  }
+}
+server.route(route)
