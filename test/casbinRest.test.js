@@ -152,6 +152,44 @@ test('allows route where plugin is enabled and enforce resolves true with dom re
   })
 })
 
+test('invokes onAllow callback if defined', t => {
+  t.plan(9)
+
+  const fastify = Fastify()
+
+  fastify.register(makeStubCasbin())
+  fastify.register(plugin, {
+    onAllow: (reply, { sub, obj, act }) => {
+      t.equal(sub, undefined)
+      t.equal(obj, '/')
+      t.equal(act, 'GET')
+    }
+  })
+
+  fastify.get('/', {
+    casbin: {
+      rest: true
+    }
+  }, () => 'ok')
+
+  fastify.ready(async err => {
+    t.error(err)
+
+    fastify.casbin.enforce.callsFake((sub, obj, act) => {
+      t.equal(sub, undefined)
+      t.equal(obj, '/')
+      t.equal(act, 'GET')
+      return Promise.resolve(true)
+    })
+
+    t.equal((await fastify.inject('/')).body, 'ok')
+
+    t.ok(fastify.casbin.enforce.called)
+
+    fastify.close()
+  })
+})
+
 test('forbids route where plugin is enabled and enforce resolves false', t => {
   t.plan(6)
 

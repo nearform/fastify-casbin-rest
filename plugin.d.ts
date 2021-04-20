@@ -43,6 +43,7 @@ export interface FastifyCasbinRestOptions {
   getObj?(request: FastifyRequest): string
   getAct?(request: FastifyRequest): string
   onDeny?(reply: FastifyReply, checkParams: Permission): void
+  onAllow?(reply: FastifyReply, checkParams: Permission): void
   log?(fastify: FastifyInstance, request: FastifyRequest, checkParams: Permission ): void
   hook?: Hook
 }

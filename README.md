@@ -62,6 +62,7 @@ The API exposed by this plugin is the configuration options:
 | `getObj` | `Request => string`                                        | Extracts `obj` from the request                   | `r => r.url`                    |
 | `getAct` | `Request => string`                                        | Extracts `act` from the request                   | `r => r.method`                 |
 | `onDeny` | `(Reply, { sub, obj, act, dom }) => any`                   | Invoked when Casbin's `enforce` resolves to false | Returns a `403 Forbidden` error |
+| `onAllow`| `(Reply, { sub, obj, act, dom }) => any`                   | Invoked when Casbin's `enforce` resolves to true  | noop                            |
 | `log`    | `(Fastify, Request, { sub, obj, act, dom }) => void`       | Invoked before invoking Casbin's `enforce`        | Logs using fastify.log.info     |
 | `hook`   | `'onRequest', 'preParsing', 'preValidation', 'preHandler'` | Which lifecycle to use for performing the check   | `'preHandler'`                  |
 
