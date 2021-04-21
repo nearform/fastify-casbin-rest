@@ -47,7 +47,11 @@ async function fastifyCasbinRest (fastify, options) {
         const isAuthorized = getDom ? await fastify.casbin.enforce(sub, dom, obj, act) : await fastify.casbin.enforce(sub, obj, act)
 
         if (!isAuthorized) {
-          await options.onDeny(reply, { sub, dom, obj, act })
+          return await options.onDeny(reply, { sub, dom, obj, act })
+        }
+
+        if (options.onAllow) {
+          await options.onAllow(reply, { sub, dom, obj, act })
         }
       })
     }
