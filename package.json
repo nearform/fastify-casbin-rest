@@ -45,7 +45,7 @@
     "http-errors": "^1.8.0"
   },
   "devDependencies": {
-    "@types/node": "^14.14.21",
+    "@types/node": "^15.0.0",
     "fastify": "^3.10.1",
     "pre-commit": "^1.2.2",
     "sinon": "^10.0.1",
