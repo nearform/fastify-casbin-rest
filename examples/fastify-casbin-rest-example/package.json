@@ -13,7 +13,7 @@
     "casbin-pg-adapter": "^1.4.0",
     "casbin-pg-watcher": "^0.1.1",
     "fastify": "^3.7.0",
-    "fastify-casbin": "^1.0.0",
+    "fastify-casbin": "^2.1.0",
     "fastify-cli": "^2.5.0",
     "fastify-jwt": "^2.1.3",
     "fastify-plugin": "^3.0.0",
