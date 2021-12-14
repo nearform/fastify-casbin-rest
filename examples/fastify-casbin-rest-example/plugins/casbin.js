@@ -31,7 +31,7 @@ module.exports = fp(async function (
   { connectionString, casbinAdapter }
 ) {
   await fastify.register(require('fastify-casbin'), {
-    modelPath: join(configDir, 'rest_model.conf'),
+    model: join(configDir, 'rest_model.conf'),
     ...(await getCasbinAdapterOptions(casbinAdapter, connectionString))
   })
 
