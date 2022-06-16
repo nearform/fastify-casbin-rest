@@ -42,7 +42,7 @@
   "homepage": "https://github.com/nearform/fastify-casbin-rest#readme",
   "dependencies": {
     "fastify-plugin": "^3.0.0",
-    "http-errors": "^1.8.0"
+    "http-errors": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
