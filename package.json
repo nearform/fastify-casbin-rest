@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "fastify": "^4.0.2",
+    "fastify": "^5.0.0",
     "pre-commit": "^1.2.2",
     "sinon": "^19.0.2",
     "snazzy": "^9.0.0",
