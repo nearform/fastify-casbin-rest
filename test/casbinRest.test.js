@@ -1,7 +1,6 @@
 'use strict'
 
-const tap = require('tap')
-const test = tap.test
+const {test, beforeEach, afterEach} = require('node:test')
 const Fastify = require('fastify')
 const sinon = require('sinon')
 const fp = require('fastify-plugin')
@@ -26,18 +25,12 @@ function makeStubCasbin () {
 
 let fastify
 
-tap.beforeEach(async () => {
+beforeEach(() => {
   fastify = new Fastify()
-  await fastify.register(makeStubCasbin())
+  return fastify.register(makeStubCasbin())
 })
 
-tap.afterEach(async () => {
-  try {
-    await fastify.close()
-  } catch (error) {
-    tap.error(error)
-  }
-})
+afterEach(() => fastify.close())
 
 test('throws if no casbin decorator exists', async t => {
   t.plan(1)
@@ -45,7 +38,7 @@ test('throws if no casbin decorator exists', async t => {
     const buggyFastify = new Fastify()
     await buggyFastify.register(plugin)
   } catch (err) {
-    t.equal(err.message, "The decorator 'casbin' required by 'fastify-casbin-rest' is not present in Fastify")
+    t.assert.equal(err.message, "The decorator 'casbin' required by 'fastify-casbin-rest' is not present in Fastify")
   }
 })
 
@@ -56,7 +49,7 @@ test('throws if fastify-casbin plugin is not registered', async t => {
     buggyFastify.decorate('casbin', sinon.stub())
     await buggyFastify.register(plugin)
   } catch (err) {
-    t.equal(err.message, "The dependency 'fastify-casbin' of plugin 'fastify-casbin-rest' is not registered")
+    t.assert.equal(err.message, "The dependency 'fastify-casbin' of plugin 'fastify-casbin-rest' is not registered")
   }
 })
 
@@ -77,11 +70,11 @@ test('ignores routes where plugin is not enabled', async t => {
 
   await fastify.ready()
 
-  t.equal((await fastify.inject('/no-options')).body, 'ok')
-  t.equal((await fastify.inject('/no-casbin-rest')).body, 'ok')
-  t.equal((await fastify.inject('/false-casbin-rest')).body, 'ok')
+  t.assert.equal((await fastify.inject('/no-options')).body, 'ok')
+  t.assert.equal((await fastify.inject('/no-casbin-rest')).body, 'ok')
+  t.assert.equal((await fastify.inject('/false-casbin-rest')).body, 'ok')
 
-  t.notOk(fastify.casbin.enforce.called)
+  t.assert.ok(!fastify.casbin.enforce.called)
 })
 
 test('allows route where plugin is enabled and enforce resolves true', async t => {
@@ -92,13 +85,13 @@ test('allows route where plugin is enabled and enforce resolves true', async t =
   fastify.casbin.enforce.resolves(true)
   await fastify.ready()
 
-  t.equal((await fastify.inject('/')).body, 'ok')
-  t.ok(fastify.casbin.enforce.called)
+  t.assert.equal((await fastify.inject('/')).body, 'ok')
+  t.assert.ok(fastify.casbin.enforce.called)
 
   const [sub, obj, act] = fastify.casbin.enforce.getCall(0).args
-  t.equal(sub, undefined)
-  t.equal(obj, '/')
-  t.equal(act, 'GET')
+  t.assert.equal(sub, undefined)
+  t.assert.equal(obj, '/')
+  t.assert.equal(act, 'GET')
 })
 
 test('allows route where plugin is enabled and enforce resolves true with dom resolver enabled', async t => {
@@ -109,14 +102,14 @@ test('allows route where plugin is enabled and enforce resolves true with dom re
   fastify.casbin.enforce.resolves(true)
   await fastify.ready()
 
-  t.equal((await fastify.inject('/')).body, 'ok')
-  t.ok(fastify.casbin.enforce.called)
+  t.assert.equal((await fastify.inject('/')).body, 'ok')
+  t.assert.ok(fastify.casbin.enforce.called)
 
   const [sub, dom, obj, act] = fastify.casbin.enforce.getCall(0).args
-  t.equal(sub, undefined)
-  t.equal(dom, 'domain')
-  t.equal(obj, '/')
-  t.equal(act, 'GET')
+  t.assert.equal(sub, undefined)
+  t.assert.equal(dom, 'domain')
+  t.assert.equal(obj, '/')
+  t.assert.equal(act, 'GET')
 })
 
 test('invokes onAllow callback if defined', async t => {
@@ -128,20 +121,20 @@ test('invokes onAllow callback if defined', async t => {
   fastify.casbin.enforce.resolves(true)
   await fastify.ready()
 
-  t.equal((await fastify.inject('/')).body, 'ok')
+  t.assert.equal((await fastify.inject('/')).body, 'ok')
 
-  t.ok(onAllow.called)
+  t.assert.ok(onAllow.called)
   const [reply, argsFromCallback] = onAllow.getCall(0).args
-  t.ok(reply)
-  t.equal(argsFromCallback.sub, undefined)
-  t.equal(argsFromCallback.obj, '/')
-  t.equal(argsFromCallback.act, 'GET')
+  t.assert.ok(reply)
+  t.assert.equal(argsFromCallback.sub, undefined)
+  t.assert.equal(argsFromCallback.obj, '/')
+  t.assert.equal(argsFromCallback.act, 'GET')
 
-  t.ok(fastify.casbin.enforce.called)
+  t.assert.ok(fastify.casbin.enforce.called)
   const [sub, obj, act] = fastify.casbin.enforce.getCall(0).args
-  t.equal(sub, undefined)
-  t.equal(obj, '/')
-  t.equal(act, 'GET')
+  t.assert.equal(sub, undefined)
+  t.assert.equal(obj, '/')
+  t.assert.equal(act, 'GET')
 })
 
 test('forbids route where plugin is enabled and enforce resolves false', async t => {
@@ -152,8 +145,8 @@ test('forbids route where plugin is enabled and enforce resolves false', async t
   fastify.casbin.enforce.resolves(false)
   await fastify.ready()
 
-  t.equal((await fastify.inject('/')).statusCode, 403)
-  t.ok(fastify.casbin.enforce.called)
+  t.assert.equal((await fastify.inject('/')).statusCode, 403)
+  t.assert.ok(fastify.casbin.enforce.called)
 })
 
 test('forbids route where plugin is enabled and enforce resolves false with dom resolver enabled', async t => {
@@ -164,8 +157,8 @@ test('forbids route where plugin is enabled and enforce resolves false with dom 
   fastify.casbin.enforce.resolves(false)
   await fastify.ready()
 
-  t.equal((await fastify.inject('/')).statusCode, 403)
-  t.ok(fastify.casbin.enforce.called)
+  t.assert.equal((await fastify.inject('/')).statusCode, 403)
+  t.assert.ok(fastify.casbin.enforce.called)
 })
 
 test('works correctly if there is an existing preHandler hook', async t => {
@@ -177,9 +170,9 @@ test('works correctly if there is an existing preHandler hook', async t => {
   fastify.casbin.enforce.resolves(false)
   await fastify.ready()
 
-  t.equal((await fastify.inject('/')).statusCode, 403)
-  t.ok(fastify.casbin.enforce.called)
-  t.ok(preHandler.calledOnce)
+  t.assert.equal((await fastify.inject('/')).statusCode, 403)
+  t.assert.ok(fastify.casbin.enforce.called)
+  t.assert.ok(preHandler.calledOnce)
 })
 
 test('supports specifying custom hooks', async t => {
@@ -191,10 +184,10 @@ test('supports specifying custom hooks', async t => {
   fastify.casbin.enforce.resolves(false)
   await fastify.ready()
 
-  t.equal((await fastify.inject('/')).statusCode, 403)
+  t.assert.equal((await fastify.inject('/')).statusCode, 403)
 
-  t.ok(fastify.casbin.enforce.called)
-  t.notOk(preParsing.called)
+  t.assert.ok(fastify.casbin.enforce.called)
+  t.assert.ok(!preParsing.called)
 })
 
 test('supports specifying custom logger', async t => {
@@ -208,21 +201,21 @@ test('supports specifying custom logger', async t => {
   fastify.casbin.enforce.resolves(true)
   await fastify.ready()
 
-  t.equal((await fastify.inject('/')).statusCode, 200)
+  t.assert.equal((await fastify.inject('/')).statusCode, 200)
 
-  t.ok(log.called)
+  t.assert.ok(log.called)
   const [_fastify, _request, argsFromCallback] = log.getCall(0).args
-  t.ok(_fastify)
-  t.ok(_request)
+  t.assert.ok(_fastify)
+  t.assert.ok(_request)
 
-  t.ok(getSub.called)
-  t.equal(argsFromCallback.sub, 'custom sub')
+  t.assert.ok(getSub.called)
+  t.assert.equal(argsFromCallback.sub, 'custom sub')
 
-  t.ok(getObj.called)
-  t.equal(argsFromCallback.obj, 'custom obj')
+  t.assert.ok(getObj.called)
+  t.assert.equal(argsFromCallback.obj, 'custom obj')
 
-  t.ok(getAct.called)
-  t.equal(argsFromCallback.act, 'custom act')
+  t.assert.ok(getAct.called)
+  t.assert.equal(argsFromCallback.act, 'custom act')
 })
 
 test('supports overriding plugin rules on route level', async t => {
@@ -246,11 +239,11 @@ test('supports overriding plugin rules on route level', async t => {
 
   await fastify.inject('/')
 
-  t.ok(fastify.casbin.enforce.called)
+  t.assert.ok(fastify.casbin.enforce.called)
   const [sub, obj, act] = fastify.casbin.enforce.getCall(0).args
-  t.equal(sub, 'GET')
-  t.equal(obj, undefined)
-  t.equal(act, '/')
+  t.assert.equal(sub, 'GET')
+  t.assert.equal(obj, undefined)
+  t.assert.equal(act, '/')
 })
 
 test('supports passing constants as extractor params without domain', async t => {
@@ -274,11 +267,11 @@ test('supports passing constants as extractor params without domain', async t =>
 
   await fastify.inject('/')
 
-  t.ok(fastify.casbin.enforce.called)
+  t.assert.ok(fastify.casbin.enforce.called)
   const [sub, obj, act] = fastify.casbin.enforce.getCall(0).args
-  t.equal(sub, 'a')
-  t.equal(obj, 'b')
-  t.equal(act, 'c')
+  t.assert.equal(sub, 'a')
+  t.assert.equal(obj, 'b')
+  t.assert.equal(act, 'c')
 })
 
 test('supports passing constants as extractor params with domain', async t => {
@@ -305,8 +298,8 @@ test('supports passing constants as extractor params with domain', async t => {
   await fastify.inject('/')
 
   const [sub, dom, obj, act] = fastify.casbin.enforce.getCall(0).args
-  t.equal(sub, 'a')
-  t.equal(dom, 'users')
-  t.equal(obj, 'b')
-  t.equal(act, 'c')
+  t.assert.equal(sub, 'a')
+  t.assert.equal(dom, 'users')
+  t.assert.equal(obj, 'b')
+  t.assert.equal(act, 'c')
 })
