@@ -6,7 +6,6 @@
   "types": "plugin.d.ts",
   "scripts": {
     "test": "node --test && npm run typescript",
-
     "lint": "standard | snazzy",
     "lint:fix": "standard --fix | snazzy",
     "typescript": "tsd"
