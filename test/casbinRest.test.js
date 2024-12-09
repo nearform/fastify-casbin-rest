@@ -1,6 +1,6 @@
 'use strict'
 
-const {test, beforeEach, afterEach} = require('node:test')
+const { test, beforeEach, afterEach } = require('node:test')
 const Fastify = require('fastify')
 const sinon = require('sinon')
 const fp = require('fastify-plugin')
