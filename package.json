@@ -2,8 +2,8 @@
   "name": "fastify-casbin-rest",
   "version": "4.0.0",
   "description": "Plugin for fastify to add support for Casbin REST model",
-  "main": "plugin.js",
-  "types": "types/plugin.d.ts",
+  "main": "index.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "test": "node --test && npm run typescript",
     "lint": "standard | snazzy",

@@ -1,2 +1,2 @@
-import casbinRest from './plugin.js'
-import type { FastifyCasbinRestOptions, Hook, Permission } from './plugin.js'
+import casbinRest from './index.js'
+import type { FastifyCasbinRestOptions, Hook, Permission } from './index.js'

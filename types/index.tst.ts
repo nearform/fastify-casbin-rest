@@ -1,7 +1,7 @@
 import fastify, { FastifyReply, FastifyRequest, RequestGenericInterface } from 'fastify'
 import type { RouteOptions } from 'fastify/types/route'
 import { expect } from 'tstyche'
-import casbinRest from './plugin.js'
+import casbinRest from './index.js'
 
 const server = fastify()
 
