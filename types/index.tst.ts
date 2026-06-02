@@ -1,7 +1,7 @@
 import fastify, { FastifyReply, FastifyRequest, RequestGenericInterface } from 'fastify'
 import type { RouteOptions } from 'fastify/types/route'
-import { expectType } from 'tsd'
-import casbinRest from '../plugin'
+import { expect } from 'tstyche'
+import casbinRest from './index.js'
 
 const server = fastify()
 
@@ -10,31 +10,31 @@ server.register(casbinRest)
 server.register(casbinRest, {
   log: (fastify, request, { sub, obj, act }) => { fastify.log.info({ sub, obj, act }, 'Invoking casbin enforce') },
   onAllow: (reply, { sub, obj, act }) => {
-    expectType<FastifyReply>(reply)
-    expectType<string>(sub)
-    expectType<string>(obj)
-    expectType<string>(act)
+    expect(reply).type.toBe<FastifyReply>()
+    expect(sub).type.toBe<string>()
+    expect(obj).type.toBe<string>()
+    expect(act).type.toBe<string>()
   },
   onDeny: (reply, { sub, obj, act }) => {
-    expectType<FastifyReply>(reply)
-    expectType<string>(sub)
-    expectType<string>(obj)
-    expectType<string>(act)
+    expect(reply).type.toBe<FastifyReply>()
+    expect(sub).type.toBe<string>()
+    expect(obj).type.toBe<string>()
+    expect(act).type.toBe<string>()
   },
-  getSub: request => {
-    expectType<FastifyRequest>(request)
+  getSub: (request) => {
+    expect(request).type.toBe<FastifyRequest>()
     return ''
   },
-  getObj: request => {
-    expectType<FastifyRequest>(request)
+  getObj: (request) => {
+    expect(request).type.toBe<FastifyRequest>()
     return ''
   },
-  getAct: request => {
-    expectType<FastifyRequest>(request)
+  getAct: (request) => {
+    expect(request).type.toBe<FastifyRequest>()
     return ''
   },
-  getDom: request => {
-    expectType<FastifyRequest>(request)
+  getDom: (request) => {
+    expect(request).type.toBe<FastifyRequest>()
     return ''
   }
 })
@@ -42,10 +42,10 @@ server.register(casbinRest, {
 server.get('/', {
   casbin: {
     rest: {
-      getDom: (request: FastifyRequest) => 'users',
-      getSub: (request: FastifyRequest) => '1',
-      getObj: (request: FastifyRequest) => request.url,
-      getAct: (request: FastifyRequest) => request.method
+      getDom: (request) => 'users',
+      getSub: (request) => '1',
+      getObj: (request) => request.url,
+      getAct: (request) => request.method
     }
   }
 }, () => Promise.resolve('ok'))
