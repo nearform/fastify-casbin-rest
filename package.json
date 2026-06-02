@@ -3,20 +3,17 @@
   "version": "4.0.0",
   "description": "Plugin for fastify to add support for Casbin REST model",
   "main": "plugin.js",
-  "types": "plugin.d.ts",
+  "types": "types/plugin.d.ts",
   "scripts": {
     "test": "node --test && npm run typescript",
     "lint": "standard | snazzy",
     "lint:fix": "standard --fix | snazzy",
-    "typescript": "tsd"
+    "typescript": "tstyche"
   },
   "precommit": [
     "lint",
     "test"
   ],
-  "tsd": {
-    "directory": "test"
-  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/nearform/fastify-casbin-rest.git"
@@ -50,7 +47,7 @@
     "sinon": "^19.0.2",
     "snazzy": "^9.0.0",
     "standard": "^17.1.2",
-    "tsd": "^0.31.2",
-    "typescript": "^5.7.2"
+    "tstyche": "^7.1.0",
+    "typescript": "^5.9.3"
   }
 }
