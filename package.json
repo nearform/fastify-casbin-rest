@@ -5,7 +5,7 @@
   "main": "plugin.js",
   "types": "plugin.d.ts",
   "scripts": {
-    "test": "node --test && npm run typescript",
+    "test": "node --test test/*.test.js && npm run typescript",
     "lint": "standard | snazzy",
     "lint:fix": "standard --fix | snazzy",
     "typescript": "tsd"
@@ -44,13 +44,13 @@
     "http-errors": "^2.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.1",
+    "@types/node": "^25.2.0",
     "fastify": "^5.1.0",
     "pre-commit": "^1.2.2",
-    "sinon": "^19.0.2",
+    "sinon": "^21.0.1",
     "snazzy": "^9.0.0",
     "standard": "^17.1.2",
-    "tsd": "^0.31.2",
+    "tsd": "^0.33.0",
     "typescript": "^5.7.2"
   }
 }
